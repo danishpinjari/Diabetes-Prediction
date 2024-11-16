@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diabetes Prediction</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #eaf6f2; /* Light teal background for a fresh, health-related feel */
+        }
+    
+        .container {
+            width: 60%;
+            margin: 50px auto;
+            padding: 30px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+    
+        h1 {
+            font-size: 2em;
+            color: #2f6a70; /* A calming teal for the header */
+            margin-bottom: 20px;
+        }
+    
+        label {
+            font-size: 1.1em;
+            margin-bottom: 10px;
+            display: block;
+            color: #333;
+        }
+    
+        input[type="number"], input[type="text"], input[type="submit"] {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 2px solid #28a745; /* Green border to represent health */
+            border-radius: 8px;
+            font-size: 1em;
+            background-color: #f8f9fa; /* Light background for inputs */
+        }
+    
+        input[type="submit"] {
+            background-color: #28a745;
+            color: white;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: bold;
+        }
+    
+        input[type="submit"]:hover {
+            background-color: #218838;
+        }
+    
+        .result {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #333;
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            border: 2px solid #28a745;
+        }
+    
+        .result.success {
+            color: #28a745; /* Green for no diabetes */
+        }
+    
+        .result.failure {
+            color: #d9534f; /* Red for diabetes detected */
+        }
+    
+        .footer {
+            margin-top: 50px;
+            text-align: center;
+            font-size: 0.9em;
+            color: #777;
+        }
+    
+        .footer a {
+            color: #28a745;
+            text-decoration: none;
+        }
+    
+        .footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+       
+</head>
+<body>
+
+<div class="container">
+    <h1>Diabetes Prediction</h1>
+    <form id="predictForm">
+        <label for="Pregnancies">Pregnancies:</label>
+        <input type="number" id="Pregnancies" name="Pregnancies" required>
+
+        <label for="Glucose">Glucose:</label>
+        <input type="number" id="Glucose" name="Glucose" required>
+
+        <label for="BloodPressure">Blood Pressure:</label>
+        <input type="number" id="BloodPressure" name="BloodPressure" required>
+
+        <label for="SkinThickness">Skin Thickness:</label>
+        <input type="number" id="SkinThickness" name="SkinThickness" required>
+
+        <label for="Insulin">Insulin:</label>
+        <input type="number" id="Insulin" name="Insulin" required>
+
+        <label for="BMI">BMI:</label>
+        <input type="float" id="BMI" name="BMI" required>
+
+        <label for="DiabetesPedigreeFunction">Diabetes Pedigree Function:</label>
+        <input type="number" step="any" id="DiabetesPedigreeFunction" name="DiabetesPedigreeFunction" required>
+
+        <label for="Age">Age:</label>
+        <input type="number" id="Age" name="Age" required>
+
+        <input type="submit" value="Predict">
+    </form>
+
+    <div id="result" class="result"></div>
+</div>
+
+<script>
+    document.getElementById('predictForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        let formData = new FormData(this);
+        let data = {};
+        formData.forEach((value, key) => {
+            data[key] = value;
+        });
+
+        fetch('/predict', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(result => {
+            let prediction = result.prediction === 1 ? "Diabetes Detected" : "No Diabetes";
+            document.getElementById('result').innerText = prediction;
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            document.getElementById('result').innerText = "An error occurred. Please try again.";
+        });
+    });
+</script>
+
+</body>
+</html>
